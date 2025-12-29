@@ -28,6 +28,13 @@ particles:
   type: END_ROD
   count: 3
 
+# Boss Bar 倒计时设置
+bossbar:
+  enabled: false
+  color: YELLOW
+  style: SOLID
+  title: "&e丢弃确认倒计时: &f%time%秒"
+
 # Logging settings
 logging:
   enabled: true

@@ -26,6 +26,12 @@ public class ConfigManager {
     private Particle particleType;
     private int particleCount;
     
+    // Boss Bar 配置
+    private boolean bossBarEnabled;
+    private org.bukkit.boss.BarColor bossBarColor;
+    private org.bukkit.boss.BarStyle bossBarStyle;
+    private String bossBarTitle;
+    
     // 日志配置
     private boolean loggingEnabled;
     private String logFile;
@@ -79,6 +85,12 @@ public class ConfigManager {
         this.particleType = parseParticle(config.getString("particles.type", "END_ROD"));
         this.particleCount = config.getInt("particles.count", 3);
         
+        // 加载Boss Bar配置
+        this.bossBarEnabled = config.getBoolean("bossbar.enabled", false);
+        this.bossBarColor = parseBarColor(config.getString("bossbar.color", "YELLOW"));
+        this.bossBarStyle = parseBarStyle(config.getString("bossbar.style", "SOLID"));
+        this.bossBarTitle = colorize(config.getString("bossbar.title", "&e丢弃确认倒计时: &f%time%秒"));
+        
         // 加载日志配置
         this.loggingEnabled = config.getBoolean("logging.enabled", true);
         this.logFile = config.getString("logging.file", "drops.log");
@@ -123,6 +135,24 @@ public class ConfigManager {
             return Particle.END_ROD;
         }
     }
+    
+    private org.bukkit.boss.BarColor parseBarColor(String colorName) {
+        try {
+            return org.bukkit.boss.BarColor.valueOf(colorName);
+        } catch (IllegalArgumentException e) {
+            plugin.getLogger().warning("无效的Boss Bar颜色: " + colorName + ", 使用默认值");
+            return org.bukkit.boss.BarColor.YELLOW;
+        }
+    }
+    
+    private org.bukkit.boss.BarStyle parseBarStyle(String styleName) {
+        try {
+            return org.bukkit.boss.BarStyle.valueOf(styleName);
+        } catch (IllegalArgumentException e) {
+            plugin.getLogger().warning("无效的Boss Bar样式: " + styleName + ", 使用默认值");
+            return org.bukkit.boss.BarStyle.SOLID;
+        }
+    }
 
     private String colorize(String text) {
         return ChatColor.translateAlternateColorCodes('&', text);
@@ -145,6 +175,12 @@ public class ConfigManager {
     public boolean isParticleEnabled() { return particleEnabled; }
     public Particle getParticleType() { return particleType; }
     public int getParticleCount() { return particleCount; }
+    
+    // Boss Bar相关
+    public boolean isBossBarEnabled() { return bossBarEnabled; }
+    public org.bukkit.boss.BarColor getBossBarColor() { return bossBarColor; }
+    public org.bukkit.boss.BarStyle getBossBarStyle() { return bossBarStyle; }
+    public String getBossBarTitle(int timeLeft) { return bossBarTitle.replace("%time%", String.valueOf(timeLeft)); }
     
     // 日志相关
     public boolean isLoggingEnabled() { return loggingEnabled; }

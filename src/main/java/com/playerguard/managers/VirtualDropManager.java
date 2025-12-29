@@ -125,6 +125,18 @@ public class VirtualDropManager {
         if (plugin.getDropLogger() != null) {
             plugin.getDropLogger().logCreate(player, item);
         }
+        
+        // 创建Boss Bar倒计时
+        if (plugin.getConfigManager().isBossBarEnabled()) {
+            org.bukkit.boss.BossBar bossBar = org.bukkit.Bukkit.createBossBar(
+                plugin.getConfigManager().getBossBarTitle(plugin.getConfigManager().getConfirmTimeout()),
+                plugin.getConfigManager().getBossBarColor(),
+                plugin.getConfigManager().getBossBarStyle()
+            );
+            bossBar.addPlayer(player);
+            bossBar.setProgress(1.0);
+            pendingDrop.setBossBar(bossBar);
+        }
     }
 
     private void startFloatingAnimation(Player player, PendingDrop drop) {
@@ -144,6 +156,16 @@ public class VirtualDropManager {
             // 生成粒子效果
             Location particleLoc = new Location(player.getWorld(), newX, newY, newZ);
             spawnParticles(player, particleLoc);
+            
+            // 更新Boss Bar进度
+            if (drop.getBossBar() != null) {
+                long elapsed = System.currentTimeMillis() - drop.getCreateTime();
+                long totalTime = plugin.getConfigManager().getConfirmTimeout() * 1000L;
+                double progress = Math.max(0, 1.0 - (double) elapsed / totalTime);
+                int timeLeft = (int) Math.ceil((totalTime - elapsed) / 1000.0);
+                drop.getBossBar().setProgress(progress);
+                drop.getBossBar().setTitle(plugin.getConfigManager().getBossBarTitle(Math.max(0, timeLeft)));
+            }
             
             WrapperPlayServerEntityTeleport teleportPacket = new WrapperPlayServerEntityTeleport(
                 drop.getEntityId(),
@@ -272,6 +294,11 @@ public class VirtualDropManager {
         }
         if (drop.getAnimationTask() != null) {
             drop.getAnimationTask().cancel();
+        }
+        
+        // 移除Boss Bar
+        if (drop.getBossBar() != null) {
+            drop.getBossBar().removeAll();
         }
         
         // 发送销毁实体数据包

@@ -1,6 +1,7 @@
 package com.playerguard.data;
 
 import com.github.retrooper.packetevents.util.Vector3d;
+import org.bukkit.boss.BossBar;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -15,6 +16,7 @@ public class PendingDrop {
     private final long createTime;
     private BukkitTask timeoutTask;
     private BukkitTask animationTask;
+    private BossBar bossBar;
 
     public PendingDrop(int entityId, UUID entityUuid, ItemStack item, Vector3d position, long createTime) {
         this.entityId = entityId;
@@ -62,5 +64,13 @@ public class PendingDrop {
 
     public void setAnimationTask(BukkitTask animationTask) {
         this.animationTask = animationTask;
+    }
+    
+    public BossBar getBossBar() {
+        return bossBar;
+    }
+    
+    public void setBossBar(BossBar bossBar) {
+        this.bossBar = bossBar;
     }
 }
