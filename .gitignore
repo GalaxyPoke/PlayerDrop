@@ -18,6 +18,7 @@ Thumbs.db
 # Build output
 target/
 out/
+bin/
 *.jar
 !gradle/wrapper/*.jar
 
