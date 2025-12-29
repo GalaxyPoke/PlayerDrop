@@ -1,0 +1,58 @@
+# PlayerDropGuard Configuration
+
+# Time in seconds before pending drop is automatically returned to inventory
+confirm-timeout: 5
+
+# Time in milliseconds for double-click detection to open settings GUI
+double-click-interval: 300
+
+# Glow color for virtual dropped items
+# Available: WHITE, ORANGE, MAGENTA, LIGHT_BLUE, YELLOW, LIME, PINK, GRAY, 
+#            LIGHT_GRAY, CYAN, PURPLE, BLUE, BROWN, GREEN, RED, BLACK
+glow-color: YELLOW
+
+# Whether drop protection is enabled by default for new players
+default-enabled: true
+
+# Sound settings
+sounds:
+  enabled: true
+  create: BLOCK_NOTE_BLOCK_PLING
+  confirm: ENTITY_EXPERIENCE_ORB_PICKUP
+  recall: ENTITY_ITEM_PICKUP
+  timeout: BLOCK_NOTE_BLOCK_BASS
+
+# Particle effects settings
+particles:
+  enabled: true
+  type: END_ROD
+  count: 3
+
+# Logging settings
+logging:
+  enabled: true
+  file: "drops.log"
+
+# Database settings (leave empty to use file storage)
+database:
+  enabled: false
+  type: MySQL
+  host: localhost
+  port: 3306
+  database: minecraft
+  username: root
+  password: ""
+  table-prefix: "dropguard_"
+
+# Messages (supports color codes with &)
+messages:
+  action-bar-hint: "&e Shift+Q确认丢弃 &7| &cQ撤回"
+  dropped: "&a已丢弃 &f[%item%]"
+  recalled: "&e已撤回 &f[%item%]"
+  timeout-recalled: "&7[%item%] &e已超时自动撤回"
+  gui-title: "&8丢弃保护设置"
+  enabled: "&a保护已开启"
+  disabled: "&c保护已关闭"
+  reload-success: "&a配置已重载"
+  player-not-found: "&c找不到玩家: %player%"
+  toggled-for-player: "&a已为 %player% %status% 丢弃保护"

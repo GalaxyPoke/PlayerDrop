@@ -1,0 +1,27 @@
+name: PlayerDropGuard
+version: ${version}
+main: com.playerguard.PlayerDropGuard
+api-version: '1.21'
+depend: [packetevents]
+softdepend: [PlaceholderAPI]
+description: Private drop item protection plugin using PacketEvents
+
+commands:
+  pdg:
+    description: PlayerDropGuard管理命令
+    usage: /pdg <reload|toggle|status|stats>
+    aliases: [dropguard, dg]
+
+permissions:
+  dropguard.use:
+    description: 使用丢弃保护功能
+    default: true
+  dropguard.toggle:
+    description: 允许开关保护设置
+    default: true
+  dropguard.bypass:
+    description: 绕过丢弃保护
+    default: op
+  dropguard.admin:
+    description: 管理员权限（reload、toggle其他玩家）
+    default: op
