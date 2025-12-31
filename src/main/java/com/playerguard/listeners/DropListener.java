@@ -39,10 +39,6 @@ public class DropListener implements Listener {
         // 检查双击以打开设置
         if (plugin.getVirtualDropManager().checkDoubleClick(player.getUniqueId())) {
             event.setCancelled(true);
-            // 返还即将丢弃的物品
-            ItemStack droppedItem = event.getItemDrop().getItemStack();
-            player.getInventory().addItem(droppedItem);
-            event.getItemDrop().remove();
             
             // 打开设置GUI
             if (player.hasPermission("dropguard.toggle")) {
@@ -57,10 +53,6 @@ public class DropListener implements Listener {
             if (plugin.getVirtualDropManager().hasPendingDrops(player.getUniqueId())) {
                 // 确认待处理的掉落物而不是丢弃新物品
                 event.setCancelled(true);
-                ItemStack droppedItem = event.getItemDrop().getItemStack();
-                player.getInventory().addItem(droppedItem);
-                event.getItemDrop().remove();
-                
                 plugin.getVirtualDropManager().confirmDrop(player);
             }
             // 如果没有待确认的掉落物，允许潜行时正常丢弃
@@ -68,18 +60,17 @@ public class DropListener implements Listener {
         }
         
         // 普通丢弃 (不按Shift的Q) - 创建虚拟待确认掉落物
-        event.setCancelled(true);
-        ItemStack droppedItem = event.getItemDrop().getItemStack();
-        event.getItemDrop().remove();
+        ItemStack droppedItem = event.getItemDrop().getItemStack().clone();
         
         // 检查是否有待确认掉落物 - 不按Shift的Q会撤回它们
         if (plugin.getVirtualDropManager().hasPendingDrops(player.getUniqueId())) {
-            // 撤回待确认的掉落物
+            // 撤回待确认的掉落物，取消本次丢弃
+            event.setCancelled(true);
             plugin.getVirtualDropManager().recallDrop(player);
-            // 将触发此事件的物品返还到背包
-            player.getInventory().addItem(droppedItem);
         } else {
             // 创建新的虚拟待确认掉落物
+            // 不取消事件，让物品正常从背包移除，但移除掉落的实体
+            event.getItemDrop().remove();
             plugin.getVirtualDropManager().createPendingDrop(player, droppedItem);
         }
     }

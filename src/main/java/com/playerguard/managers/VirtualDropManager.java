@@ -140,10 +140,13 @@ public class VirtualDropManager {
     }
 
     private void startFloatingAnimation(Player player, PendingDrop drop) {
+        final long[] tickCounter = {0};
         BukkitTask animationTask = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             if (!player.isOnline() || !hasPendingDrop(player.getUniqueId(), drop)) {
                 return;
             }
+            
+            tickCounter[0]++;
             
             // 更新位置以保持在玩家前方
             Location loc = player.getEyeLocation();
@@ -153,9 +156,11 @@ public class VirtualDropManager {
             
             drop.setPosition(new Vector3d(newX, newY, newZ));
             
-            // 生成粒子效果
-            Location particleLoc = new Location(player.getWorld(), newX, newY, newZ);
-            spawnParticles(player, particleLoc);
+            // 每5tick生成一次粒子效果
+            if (tickCounter[0] % 5 == 0) {
+                Location particleLoc = new Location(player.getWorld(), newX, newY, newZ);
+                spawnParticles(player, particleLoc);
+            }
             
             // 更新Boss Bar进度
             if (drop.getBossBar() != null) {
@@ -200,7 +205,9 @@ public class VirtualDropManager {
         // 在玩家位置生成真实掉落物
         plugin.getServer().getScheduler().runTask(plugin, () -> {
             Location dropLoc = player.getLocation();
-            player.getWorld().dropItemNaturally(dropLoc, drop.getItem());
+            org.bukkit.entity.Item droppedEntity = player.getWorld().dropItemNaturally(dropLoc, drop.getItem());
+            // 设置捡起延迟，防止立刻被吸回
+            droppedEntity.setPickupDelay(40); // 2秒
             
             String itemName = ItemUtils.getItemName(drop.getItem());
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
